@@ -1,13 +1,31 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Mensaje from "./Mensaje";
 import Cerrar from "../img/cerrar.svg";
 
-const Modal = ({ setModal, animarModal, setAnimarModal, guardarGasto }) => {
+const Modal = ({
+  setModal,
+  animarModal,
+  setAnimarModal,
+  guardarGasto,
+  gastoEditar,
+}) => {
   const [mensaje, setMensaje] = useState("");
   const [nombre, setNombre] = useState("");
   const [cantidad, setCantidad] = useState("");
   const [categoria, setCategoria] = useState("");
+  const [fecha, setFecha] = useState('')
   const [disabled, setDisabled] = useState(false);
+  const [id, setId] = useState('')
+
+  useEffect(() => {
+    if (Object.keys(gastoEditar).length > 0) {
+      setNombre(gastoEditar.nombre);
+      setCantidad(gastoEditar.cantidad);
+      setCategoria(gastoEditar.categoria);
+      setId(gastoEditar.id)
+      setFecha(gastoEditar.fecha)
+    }
+  }, []);
 
   const ocultarModal = () => {
     setAnimarModal(false);
@@ -19,20 +37,19 @@ const Modal = ({ setModal, animarModal, setAnimarModal, guardarGasto }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    
 
     if ([nombre, cantidad, categoria].includes("")) {
       setMensaje("All fields are required");
 
-        setTimeout(() => {
-            setMensaje('')
-        }, 3000);
+      setTimeout(() => {
+        setMensaje("");
+      }, 3000);
 
       return;
     }
 
-    guardarGasto({nombre, cantidad, categoria})
-    setDisabled(true)
+    guardarGasto({ nombre, cantidad, categoria, id, fecha});
+    setDisabled(true);
   };
 
   return (
@@ -45,7 +62,7 @@ const Modal = ({ setModal, animarModal, setAnimarModal, guardarGasto }) => {
         onSubmit={handleSubmit}
         className={`formulario ${animarModal ? "animar" : "cerrar"}`}
       >
-        <legend>New expense</legend>
+        <legend>{gastoEditar.nombre ? 'Edit expense' : 'New expense'}</legend>
         <div className="campo">
           <label htmlFor="nombre">Expense name</label>
           {mensaje && <Mensaje tipo="error">{mensaje}</Mensaje>}
@@ -88,7 +105,7 @@ const Modal = ({ setModal, animarModal, setAnimarModal, guardarGasto }) => {
           </select>
         </div>
 
-        <input type="submit" value={`Agregar gasto`} disabled={disabled} />
+        <input type="submit" value={gastoEditar.nombre ? 'Save changes' : 'Add expense'} disabled={disabled} />
       </form>
     </div>
   );
