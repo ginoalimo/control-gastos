@@ -37,6 +37,7 @@ function App() {
         gastoState.id === gasto.id ? gasto : gastoState
       );
       setGastos(gastosActualizados)
+      setGastoEditar({})
     } else {
       gasto.id = generarId();
       gasto.fecha = Date.now();
@@ -48,6 +49,14 @@ function App() {
       setModal(false);
     }, 500);
   };
+
+  const eliminarGasto = id => {
+
+    const gastosActualiizados = gastos.filter( gasto => gasto.id !== id)
+
+    setGastos(gastosActualiizados)
+
+  }
 
   return (
     <div className={modal ? "fijar" : undefined}>
@@ -62,7 +71,7 @@ function App() {
       {isValidPresupuesto && (
         <>
           <main>
-            <ListadoGastos gastos={gastos} setGastoEditar={setGastoEditar} />
+            <ListadoGastos gastos={gastos} setGastoEditar={setGastoEditar} eliminarGasto={eliminarGasto} />
           </main>
           <div className="nuevo-gasto">
             <img
@@ -81,6 +90,7 @@ function App() {
           setAnimarModal={setAnimarModal}
           guardarGasto={guardarGasto}
           gastoEditar={gastoEditar}
+          setGastoEditar={setGastoEditar}
         />
       )}
     </div>
